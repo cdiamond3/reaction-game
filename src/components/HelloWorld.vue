@@ -1,18 +1,20 @@
 <script setup lang="ts">
+import { VCard, VCardTitle, VCardText, VBtn } from 'vuetify/components';
 defineProps<{
   msg: string
 }>()
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
+  <v-card class="greetings">
+    <v-card-title class="green">{{ msg }}</v-card-title>
+    <v-card-text>
       You’ve successfully created a project with
       <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next?
-    </h3>
-  </div>
+    </v-card-text>
+    <v-btn color="primary">Get Started</v-btn>
+  </v-card>
 </template>
 
 <style scoped>
