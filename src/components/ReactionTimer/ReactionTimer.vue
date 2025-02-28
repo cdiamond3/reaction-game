@@ -1,26 +1,21 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { VCard, VCardTitle, VBtn } from 'vuetify/components';
+import { VCard, VBtn } from 'vuetify/components';
 import { ref, watch } from 'vue';
+import axios from 'axios';
 
-const name = ref('');
-const stats = ref({});
 
 const selectedColor = ref('red'); // Add a ref to store the selected color
 const isRed = ref(false)
 const isStarted = ref(false)
 const reactionTime = ref(0)
 const isDisabled = ref(false);
+const errorMessage = ref('');
+const ourUser = ref('')
 
 let timer: number;
 
 const scores = ref<number[]>([]);
-
-interface User {
-  id: number;
-  name: string;
-  stats: object;
-}
 
 const changeColor = () => {
   setTimeout(() => {
@@ -68,6 +63,28 @@ const averageTime = computed(() => {
   return Math.floor(total / scores.value.length);
 });
 
+ourUser.value = localStorage.getItem('username') ?? ''
+
+const handleSendStats = async () => {
+    try {
+        await axios.put(`http://localhost:3000/api/users/${ourUser.value}/stats`, {
+            times: scores.value,
+            date: new Date(),
+        });
+        console.log('Stats sent successfully');
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('Error sending stats:', error.response ? error.response.data : error.message);
+            errorMessage.value = error.response ? error.response.data.message : error.message;
+        } else {
+            console.error('Error sending stats:', (error as unknown as Error).message);
+            errorMessage.value = (error as Error).message;
+        }
+    }
+};
+
+watch(scores, handleSendStats);
+
 </script>
 
 
@@ -102,6 +119,7 @@ const averageTime = computed(() => {
       <div v-if="scores.length >= 3" class="averageTimeLabel">
         Your Average Time Is:
         {{ averageTime + 'MS'}}
+        <v-btn @click="handleSendStats" class="resetButton"> Save </v-btn>
       </div>
       <div v-else class="averageTimeDisclaimer">
         MUST PLAY 3 TIMES FOR AVERAGE TIME
@@ -145,7 +163,7 @@ const averageTime = computed(() => {
 }
 
 .scoreLabel {
-  margin-right: 10px; /* Adjust the value as needed */
+  margin-right: 10px;
 }
 
 .averageTimeLabel {

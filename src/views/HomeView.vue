@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import HelloWorld from '@/components/ReactionTimer/ReactionTimer.vue';
+import LoginPageComponent from '@/components/LoginPage/LoginPageComponent.vue';
+
 
 </script>
 
 <template>
   <main>
-    <HelloWorld/>
+    <LoginPageComponent />
   </main>
 </template>
